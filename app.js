@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import express from "express";
 import postRoute from "./routes/post.route.js" ;
 import testRoute from "./routes/test.route.js";
+import userRoute from "./routes/user.route.js";
 
 dotenv.config();
 const app = express();
@@ -15,8 +16,9 @@ app.get("/", (req, res) => {
   res.send("Hello, the server is running!");
 });
 
-app.use("/api/posts", postRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/users", userRoute);
+app.use("/api/posts", postRoute);
 app.use("/api/test", testRoute);
 
 app.listen(8800, () => {
