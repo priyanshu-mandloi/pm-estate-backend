@@ -72,17 +72,61 @@ export const getChat = async (req, res) => {
   }
 };
 
+// export const addChat = async (req, res) => {
+//   const tokenUserId = req.userId;
+//   try {
+//     const newChat = await prisma.chat.create({
+//       data: {
+//         userIDs: [tokenUserId, req.body.receiverId],
+//       },
+//     });
+//     res.status(200).json(newChat);
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({ message: "Failed to add chat!" });
+//   }
+// };
+
 export const addChat = async (req, res) => {
-  const tokenUserId = req.userId;
+  const { receiverId } = req.body;
+  const senderId = req.userId; // Ensure this is correctly set from the authentication middleware
+
+  // Check if senderId and receiverId are present and not the same
+  if (!senderId || !receiverId) {
+    return res.status(400).json({ message: "Sender or receiver ID is missing" });
+  }
+  if (senderId === receiverId) {
+    return res.status(400).json({ message: "You cannot send a message to yourself" });
+  }
+
   try {
-    const newChat = await prisma.chat.create({
+    // Check if a chat already exists between the two users
+    const existingChat = await prisma.chat.findFirst({
+      where: {
+        AND: [
+          { userIDs: { has: senderId } },
+          { userIDs: { has: receiverId } }
+        ]
+      }
+    });
+
+    if (existingChat) {
+      return res.status(200).json({ message: "Chat already exists", chat: existingChat });
+    }
+
+    // Create a new chat
+    const chat = await prisma.chat.create({
       data: {
-        userIDs: [tokenUserId, req.body.receiverId],
+        userIDs: [senderId, receiverId],
+        users: {
+          connect: [{ id: senderId }, { id: receiverId }],
+        },
       },
     });
-    res.status(200).json(newChat);
+
+    res.status(201).json(chat);
   } catch (err) {
-    console.log(err);
+    console.error("Error creating chat:", err);
     res.status(500).json({ message: "Failed to add chat!" });
   }
 };

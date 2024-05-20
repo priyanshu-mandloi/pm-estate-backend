@@ -76,11 +76,48 @@ export const deleteUser = async (req, res) => {
   }
 };
 
+// export const savePost = async (req, res) => {
+//   const postId = req.body.postId;
+//   const tokenUserId = req.userId;
+
+//   try {
+//     const savedPost = await prisma.savedPost.findUnique({
+//       where: {
+//         userId_postId: {
+//           userId: tokenUserId,
+//           postId,
+//         },
+//       },
+//     });
+
+//     if (savedPost) {
+//       await prisma.savedPost.delete({
+//         where: {
+//           id: savedPost.id,
+//         },
+//       });
+//       res.status(200).json({ message: "Post removed from saved list" });
+//     } else {
+//       await prisma.savedPost.create({
+//         data: {
+//           userId: tokenUserId,
+//           postId,
+//         },
+//       });
+//       res.status(200).json({ message: "Post saved" });
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({ message: "Failed to delete users!" });
+//   }
+// };
+
 export const savePost = async (req, res) => {
   const postId = req.body.postId;
   const tokenUserId = req.userId;
 
   try {
+    // Check if the saved post already exists
     const savedPost = await prisma.savedPost.findUnique({
       where: {
         userId_postId: {
@@ -90,6 +127,7 @@ export const savePost = async (req, res) => {
       },
     });
 
+    // If it exists, delete it (un-save the post)
     if (savedPost) {
       await prisma.savedPost.delete({
         where: {
@@ -98,6 +136,7 @@ export const savePost = async (req, res) => {
       });
       res.status(200).json({ message: "Post removed from saved list" });
     } else {
+      // If it doesn't exist, create a new entry (save the post)
       await prisma.savedPost.create({
         data: {
           userId: tokenUserId,
@@ -108,7 +147,7 @@ export const savePost = async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    res.status(500).json({ message: "Failed to delete users!" });
+    res.status(500).json({ message: "Failed to save post!" });
   }
 };
 
