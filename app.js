@@ -11,9 +11,26 @@ import userRoute from "./routes/user.route.js";
 
 dotenv.config();
 const app = express();
-const origins = "http://localhost:5173" || "https://pm-real-estate-web.vercel.app";
-// Set up of the cors
-app.use(cors({origin: origins,credentials:true}));
+// const origins = "http://localhost:5173" || "https://pm-real-estate-web.vercel.app";
+// // Set up of the cors
+// app.use(cors({origin: origins,credentials:true}));
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://pm-real-estate-web.vercel.app'
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.get("/", (req, res) => {
