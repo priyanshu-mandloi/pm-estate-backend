@@ -11,8 +11,9 @@ import userRoute from "./routes/user.route.js";
 
 dotenv.config();
 const app = express();
+const origins = "http://localhost:5173" || "https://pm-real-estate-web.vercel.app";
 // Set up of the cors
-app.use(cors({origin:process.env.CLIENT_URL,credentials:true}));
+app.use(cors({origin: origins,credentials:true}));
 app.use(express.json());
 app.use(cookieParser());
 app.get("/", (req, res) => {
