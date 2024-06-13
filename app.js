@@ -12,7 +12,11 @@ import userRoute from "./routes/user.route.js";
 dotenv.config();
 const app = express();
 // Set up of the cors
-app.use(cors({origin:process.env.CLIENT_URL,credentials:true}));
+// app.use(cors({origin:process.env.CLIENT_URL,credentials:true}));
+app.use(cors({
+  origin: ["https://www.priyanshumandloi.tech","http://localhost:5173"],
+  credentials: true,
+}));
 
 app.use(express.json());
 app.use(cookieParser());
