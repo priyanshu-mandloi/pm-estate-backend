@@ -65,16 +65,12 @@ export const login = async (req, res) => {
       process.env.JWT_SECRET_KEY,
       { expiresIn: age }
     );
-<<<<<<< HEAD
-     console.log(token);
-=======
-      console.log(token);
->>>>>>> 6834d5b56125853065a3ffbc677d5e42e663beaa
+
     const { password: userPassword, ...userInfo } = user;
 
     res
       .cookie("token", token, {
-        httpOnly: true,
+        // httpOnly: true,
         secure:true,
         // secure: process.env.NODE_ENV === 'production',
         maxAge: age,
